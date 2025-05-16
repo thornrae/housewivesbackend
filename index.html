@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Add Real Housewives Tagline</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 2rem;
+      }
+
+      label,
+      input,
+      textarea {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      input,
+      textarea {
+        width: 300px;
+      }
+
+      button {
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Add a Real Housewives Tagline</h1>
+
+    <form id="tagline-form">
+      <label for="name">Housewife Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="season">Season:</label>
+      <input type="number" id="season" name="season" required />
+
+      <label for="city">City:</label>
+      <input type="text" id="city" name="city" required />
+
+      <label for="text">Tagline Text:</label>
+      <textarea id="text" name="text" required></textarea>
+
+      <button type="submit">Submit Tagline</button>
+    </form>
+
+    <p id="response"></p>
+
+    <script>
+      const form = document.getElementById('tagline-form');
+      const responseEl = document.getElementById('response');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const data = {
+          housewife: document.getElementById('name').value,
+          season: parseInt(document.getElementById('season').value),
+          city: document.getElementById('city').value,
+          text: document.getElementById('text').value,
+        };
+
+        try {
+          const res = await fetch('http://localhost:3000/taglines', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (res.ok) {
+            const result = await res.json();
+            responseEl.textContent = `✅ Added tagline for ${result.housewife} (Season ${result.season})!`;
+            form.reset();
+          } else {
+            throw new Error('Server error');
+          }
+        } catch (err) {
+          console.error(err);
+          responseEl.textContent = '❌ Failed to add tagline.';
+        }
+      });
+    </script>
+  </body>
+
+</html>
